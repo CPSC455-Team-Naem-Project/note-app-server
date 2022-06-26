@@ -1,0 +1,20 @@
+{
+  "name": "notes-app-server",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "nodemon --require ts-node/register ./bin/www"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "express-swagger-generator": "^1.1.17",
+    "mongoose": "^6.4.0",
+    "morgan": "~1.9.1",
+    "ts-node": "^10.8.1"
+  },
+  "devDependencies": {
+    "typescript": "^4.7.4"
+  }
+}
