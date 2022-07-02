@@ -1,11 +1,11 @@
 import {connect, connection} from 'mongoose';
 
-const dbURI = 'mongodb+srv://admin:admin@cluster0.vlhjf.mongodb.net/?retryWrites=true&w=majority';
+const dbURI = 'mongodb+srv://admin:admin@cluster0.vlhjf.mongodb.net/NotesApp?retryWrites=true&w=majority';
 
-connect(dbURI).then(console.log);
+connect(dbURI).then(() => console.log('Connected'));
 
 
-connection.on('error',function (err) {
+connection.on('error', (err: any) => {
     console.log('Mongoose default connection error: ' + err);
 });
 
