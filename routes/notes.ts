@@ -1,5 +1,4 @@
 import {UserNote} from "../models/UserNote";
-import {Note} from "../models/UploadedFile";
 
 const express = require('express');
 const router = express.Router();
@@ -16,8 +15,7 @@ const router = express.Router();
  */
 router.post('/upload', async function (req: any, res: any) {
     console.log(req.body)
-    const note = await new Note(req.body).save()
-    await UserNote.saveNote(note);
+    const note = await UserNote.saveNote(req.body);
     res.send(note);
 });
 

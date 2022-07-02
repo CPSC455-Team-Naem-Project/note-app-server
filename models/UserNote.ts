@@ -24,8 +24,12 @@ const UserNoteSchema = new Schema<IUserNote, UserNoteModel>({
     notes: [UploadedNoteSchema]
 });
 
-UserNoteSchema.static('saveNote', function saveNote(note: IUploadedNote) {
-    return this.findByIdAndUpdate(note.userId, {$push: {notes: note}}, {upsert: true, returnDocument: 'after'})
+UserNoteSchema.static('saveNote', async function saveNote(note: IUploadedNote) {
+    const data = await this.findByIdAndUpdate(note.userId, {$push: {notes: note}}, {
+        upsert: true,
+        returnDocument: 'after'
+    })
+    return data.notes[data.notes.length - 1]
 });
 
 UserNoteSchema.static('removeNote', function removeNote(userId: string, noteId: string) {

@@ -29,6 +29,4 @@ const UploadedNoteSchema = new Schema<IUploadedNote>({
     rating: {type: Number, required: true},
 })
 
-const Note = model('Note', UploadedNoteSchema)
-
-export {UploadedNoteSchema, IUploadedNote, Note}
+export {UploadedNoteSchema, IUploadedNote}

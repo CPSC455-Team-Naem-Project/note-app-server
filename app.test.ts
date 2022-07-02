@@ -1,7 +1,6 @@
 // import UserNoteModel from "./models/UserNoteModel";
 
 import {UserNote} from "./models/UserNote";
-import {Note} from "./models/UploadedFile";
 
 const db = require('./models/db')
 
