@@ -33,7 +33,6 @@ UserNoteSchema.static('saveNote', async function saveNote(note: IUploadedNote) {
 });
 
 UserNoteSchema.static('removeNote', function removeNote(userId: string, noteId: string) {
-    // return this.findByIdAndUpdate(note.userId, {$pull: {notes: {$elemMatch: {"_id": note._id}}}}, {returnDocument: 'after'})
     return this.findByIdAndUpdate(userId, {$pull: {notes: {_id: noteId}}}, {returnDocument: 'after'})
 });
 
