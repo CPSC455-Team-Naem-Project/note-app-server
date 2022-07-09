@@ -12,6 +12,7 @@ interface IUserNote {
 
 interface UserNoteModel extends Model<IUserNote> {
     saveNote(note: IUploadedNote): Promise<Document>;
+    saveNotes(userId: string, notes: IUploadedNote[]): Promise<Document>;
     removeNote(userId: string, noteId: string): Promise<Document>;
     getNote(userId: string, noteId: string): Promise<Document>;
     editNote(note: IUploadedNote): Promise<Document>;
@@ -30,6 +31,14 @@ UserNoteSchema.static('saveNote', async function saveNote(note: IUploadedNote) {
         returnDocument: 'after'
     })
     return data.notes[data.notes.length - 1]
+});
+
+UserNoteSchema.static('saveNotes', async function saveNotes(userId: string, notes: IUploadedNote[]) {
+    const data = await this.findByIdAndUpdate(userId, {$push: {notes: {$each: notes}}}, {
+        upsert: true,
+        returnDocument: 'after'
+    })
+    return data.notes
 });
 
 UserNoteSchema.static('removeNote', function removeNote(userId: string, noteId: string) {
