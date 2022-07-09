@@ -1,9 +1,8 @@
 import {Model, model, Schema, Types} from 'mongoose';
 import {IUploadedNote, UploadedNoteSchema} from "./UploadedFile";
-import Doc = Mocha.reporters.Doc;
 
 interface IUserNote {
-    _id: Types.ObjectId;
+    _id: string;
     userDisplayName: string;
     userId: string;
     userEmail: string;
@@ -19,6 +18,7 @@ interface UserNoteModel extends Model<IUserNote> {
 }
 
 const UserNoteSchema = new Schema<IUserNote, UserNoteModel>({
+    _id: { type: String, required: false },
     userDisplayName: { type: String, required: true },
     userId: { type: String, required: true },
     userEmail: { type: String, required: true },
