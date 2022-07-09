@@ -25,7 +25,22 @@ router.post('/uploadOne', async function (req: any, res: any) {
 
 router.get('/getByUserIdAndNoteId/:userId/:noteId', async (req: any, res: any) => {
     const {noteId, userId} = req.params;
-    return res.send(await UserNote.getNote(userId, noteId));
+    try {
+        const note = await UserNote.getNote(userId, noteId)
+        return res.send(note);
+    } catch (e) {
+        res.status(204).send()
+    }
+})
+
+router.get('/getAllNotesById/:userId', async (req: any, res: any) => {
+    const {userId} = req.params;
+    try {
+        const data = await UserNote.findById(userId)
+        return res.send(data.notes);
+    } catch (e) {
+        res.status(204).send()
+    }
 })
 
 router.post('/editById', async (req: any, res: any) => {

@@ -58,10 +58,11 @@ UserNoteSchema.static('getNote', async function getNote(userId: string, noteId: 
     res.userEmail = data.userEmail;
     res.userDisplayName = data.userDisplayName;
     return res;
+
 });
 
-UserNoteSchema.static('editNote', function editNote(note: IUploadedNote, cb: any) {
-    return  this.findOneAndUpdate(
+UserNoteSchema.static('editNote', function editNote(note: IUploadedNote) {
+    return this.findOneAndUpdate(
         {_id: note.userId, "notes._id": note._id},
         {$set: {"notes.$": note}})
         .exec()
