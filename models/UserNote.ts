@@ -53,7 +53,11 @@ UserNoteSchema.static('getNote', async function getNote(userId: string, noteId: 
             "notes.$": 1
         }
     ).exec()
-    return data.notes[0];
+    const res = data.notes[0];
+    res.userId = data.userId;
+    res.userEmail = data.userEmail;
+    res.userDisplayName = data.userDisplayName;
+    return res;
 });
 
 UserNoteSchema.static('editNote', function editNote(note: IUploadedNote, cb: any) {
