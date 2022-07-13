@@ -52,5 +52,4 @@ router.delete('/deleteByUserIdAndNoteId/:userId/:noteId', async (req: any, res: 
     return res.send(await UserNote.removeNote(userId, noteId));
 })
 
-
 module.exports = router;

@@ -1,5 +1,3 @@
-// import UserNoteModel from "./models/UserNoteModel";
-
 import {UserNote} from "./models/UserNote";
 
 const db = require('./models/db')
@@ -16,14 +14,19 @@ describe('Array', function () {
             "userId": "62b7a9f6fa8adbd0adf3d509",
             "userDisplayName": "Jimmy Palelil",
             "userEmail": "jimmypalelil@gmail.com",
-            "fileName": "husky.png",
-            "size": 1234,
-            "url": "https://abc.com/image.png",
+            "files": [
+                {
+                    "fileName": "husky.png",
+                    "size": 1234,
+                    "url": "https://abc.com/image.png",
+                    "contentType": "application/jpg"
+                }
+            ],
             "title": "my note",
-            "course": "cpsc 1230",
+            "course": {name: "cpsc 1230", label: "cpsc 1230", className: "CPSC1230", _id: 5},
             "visibility": true,
             "rating": 3,
-            "contentType": "application/jpg"
+            date: new Date().toDateString()
         });
         console.log((s as any).notes.length)
     });
@@ -41,15 +44,21 @@ describe('Array', function () {
                 userEmail: 'jimmypalelil@gmail.com',
                 userDisplayName: 'Jimmy Palelil',
                 userId: '62b7a9f6fa8adbd0adf3d509',
-                fileName: 'husky.png',
-                url: 'https://abc.com/image.png',
-                size: 1234,
-                contentType: 'application/jpg',
+                "files": [
+                    {
+                        "fileName": "husky.png",
+                        "size": 1234,
+                        "url": "https://abc.com/image.png",
+                        "contentType": "application/jpg"
+                    }
+                ],
                 title: 'my UPDATED note',
-                course: 'cpsc 410',
+                "course": {name: "cpsc 410", label: "cpsc 410", className: "CPSC410", _id: 6},
                 visibility: true,
                 rating: 3,
                 _id: "62bfb46e2228e4a7e89d7ff0",
+                date: new Date().toDateString()
+
             });
         console.log(r)
     });
