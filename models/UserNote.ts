@@ -70,12 +70,12 @@ UserNoteSchema.static('editNote', function editNote(note: IUploadedNote) {
 });
 
 UserNoteSchema.static('findPublicNotes', async function findPublicNotes() {
-    let data = await this.find({"notes.visibility":  true, "notes.course.name": "CPSC 110"}).exec()
+    let data = await this.find({"notes.visibility":  true}).exec()
     console.log("DATA IS", data)
     let allNotes = data.map(note =>note.notes)
     let allNotesArray = allNotes.flat()
     console.log("ALL NOTES", allNotesArray)
-    let publicNotes = allNotesArray.filter(note => note.visibility === true && note.course.name == "CPSC 110")
+    let publicNotes = allNotesArray.filter(note => note.visibility === true)
     return publicNotes
 });
 
