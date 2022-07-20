@@ -7,6 +7,8 @@ interface IUserNote {
     userId: string;
     userEmail: string;
     notes: IUploadedNote[];
+    followers: string[];
+    following: string[];
 }
 
 interface UserNoteModel extends Model<IUserNote> {
@@ -16,6 +18,7 @@ interface UserNoteModel extends Model<IUserNote> {
     getNote(userId: string, noteId: string): Promise<Document>;
     editNote(note: IUploadedNote): Promise<Document>;
     findPublicNotes(): Promise<Document>;
+    addFollower(note: IUploadedNote, id: string): Promise<Document>;
 }
 
 const UserNoteSchema = new Schema<IUserNote, UserNoteModel>({
@@ -23,7 +26,9 @@ const UserNoteSchema = new Schema<IUserNote, UserNoteModel>({
     userDisplayName: { type: String, required: true },
     userId: { type: String, required: true },
     userEmail: { type: String, required: true },
-    notes: [UploadedNoteSchema]
+    notes: [UploadedNoteSchema],
+    followers: { type: [String], required: true },
+    following: { type: [String], required: true },
 });
 
 UserNoteSchema.static('saveNote', async function saveNote(note: IUploadedNote) {
@@ -77,6 +82,19 @@ UserNoteSchema.static('findPublicNotes', async function findPublicNotes() {
     console.log("ALL NOTES", allNotesArray)
     let publicNotes = allNotesArray.filter(note => note.visibility === true && note.course.name == "CPSC 110")
     return publicNotes
+});
+
+UserNoteSchema.static('addFollower', function addFollower(userId: string, followerId: string) {
+    let followerName = "";
+    this.findById(followerId)
+    .then((data) => {
+        if (data.notes) followerName = data.notes[0].userDisplayName;
+        else followerName = "User " + followerId.toString();
+    });
+    return this.findOneAndUpdate(
+        {_id: userId},
+        {$push: {"followers": followerName}})
+        .exec()
 });
 
 

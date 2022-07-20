@@ -43,6 +43,33 @@ router.get('/getAllNotesById/:userId', async (req: any, res: any) => {
     }
 })
 
+router.get('/getFollowersById/:userId', async (req: any, res: any) => {
+    const {userId} = req.params;
+    try {
+        const data = await UserNote.findById(userId)
+        return res.send(data.followers);
+    } catch (e) {
+        res.status(204).send()
+    }
+})
+
+router.get('/getFollowingById/:userId', async (req: any, res: any) => {
+    const {userId} = req.params;
+    try {
+        const data = await UserNote.findById(userId)
+        return res.send(data.following);
+    } catch (e) {
+        res.status(204).send()
+    }
+})
+
+router.post('/addFollowerById/:userId/:followerId', async function (req: any, res: any) {
+    console.log(req.body);
+    const {userId, followerId} = req.params;
+    const follower = await UserNote.addFollower(userId, followerId);
+    res.send(follower);
+});
+
 router.post('/editById', async (req: any, res: any) => {
     return res.send(await UserNote.editNote(req.body));
 })
