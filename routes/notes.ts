@@ -43,6 +43,15 @@ router.get('/getAllNotesById/:userId', async (req: any, res: any) => {
     }
 })
 
+router.get('/getMostRecentNotes', async (req: any, res: any) => {
+    try {
+        const data = await UserNote.getMostRecentNotes();
+        return res.send(data);
+    } catch (e) {
+        res.status(204).send()
+    }
+})
+
 router.get('/getFollowersById/:userId', async (req: any, res: any) => {
     const {userId} = req.params;
     try {
@@ -67,6 +76,27 @@ router.post('/addFollowerById/:userId/:followerId', async function (req: any, re
     console.log(req.body);
     const {userId, followerId} = req.params;
     const follower = await UserNote.addFollower(userId, followerId);
+    res.send(follower);
+});
+
+router.post('/addToFollowersList/:userId/:followerId', async function (req: any, res: any) {
+    console.log(req.body);
+    const {userId, followerId} = req.params;
+    const follower = await UserNote.addToFollowersList(userId, followerId);
+    res.send(follower);
+});
+
+router.post('/removeFollower/:userId/:followerName', async function (req: any, res: any) {
+    console.log(req.body);
+    const {userId, followerName} = req.params;
+    const follower = await UserNote.removeFollower(userId, followerName);
+    res.send(follower);
+});
+
+router.post('/removeFollowing/:userId/:followingName', async function (req: any, res: any) {
+    console.log(req.body);
+    const {userId, followingName} = req.params;
+    const follower = await UserNote.removeFollowing(userId, followingName);
     res.send(follower);
 });
 
