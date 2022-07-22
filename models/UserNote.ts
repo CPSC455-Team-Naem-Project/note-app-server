@@ -19,6 +19,10 @@ interface UserNoteModel extends Model<IUserNote> {
     editNote(note: IUploadedNote): Promise<Document>;
     findPublicNotes(): Promise<Document>;
     addFollower(note: IUploadedNote, id: string): Promise<Document>;
+    addToFollowersList(note: IUploadedNote, id: string): Promise<Document>;
+    removeFollower(note: IUploadedNote, followerName: string): Promise<Document>;
+    removeFollowing(note: IUploadedNote, followingName: string): Promise<Document>;
+    getMostRecentNotes(): Promise<Document>;
 }
 
 const UserNoteSchema = new Schema<IUserNote, UserNoteModel>({
@@ -84,20 +88,52 @@ UserNoteSchema.static('findPublicNotes', async function findPublicNotes() {
     return publicNotes
 });
 
+UserNoteSchema.static('getMostRecentNotes', async function getMostRecentNotes() {
+    let allPublicNotes = await this.findPublicNotes();
+    return allPublicNotes;
+});
+
 UserNoteSchema.static('addFollower', function addFollower(userId: string, followerId: string) {
-    let followerName = "";
+    let displayName = "User " + followerId + " something else";
     this.findById(followerId)
     .then((data) => {
-        if (data.notes) followerName = data.notes[0].userDisplayName;
-        else followerName = "User " + followerId.toString();
+        if (data.notes.length > 0) {
+            displayName = data.notes[0].userDisplayName;
+        }
+        return this.findOneAndUpdate(
+            {_id: userId},
+            {$push: {"following": displayName}})
+            .exec()
     });
+});
+
+UserNoteSchema.static('addToFollowersList', function addToFollowersList(userId: string, followerId: string) {
+    let displayName = "User " + followerId;
+    this.findById(userId)
+    .then((data) => {
+        if (data.notes.length > 0) {
+            displayName = data.notes[0].userDisplayName;
+        }
+        return this.findOneAndUpdate(
+            {_id: followerId},
+            {$push: {"followers": displayName}})
+            .exec()
+    });
+});
+
+UserNoteSchema.static('removeFollower', function removeFollower(userId: string, followerName: string) {
     return this.findOneAndUpdate(
         {_id: userId},
-        {$push: {"followers": followerName}})
+        {$pull: {"followers": followerName}})
         .exec()
 });
 
-
+UserNoteSchema.static('removeFollowing', function removeFollowing(userId: string, followingName: string) {
+    return this.findOneAndUpdate(
+        {_id: userId},
+        {$pull: {"following": followingName}})
+        .exec()
+});
 
 const UserNote = model<IUserNote, UserNoteModel>('UserNote', UserNoteSchema);
 
