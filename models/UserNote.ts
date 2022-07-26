@@ -9,6 +9,7 @@ interface IUserNote {
     notes: IUploadedNote[];
     followers: string[];
     following: string[];
+    pro: Boolean
 }
 
 interface UserNoteModel extends Model<IUserNote> {
@@ -23,6 +24,7 @@ interface UserNoteModel extends Model<IUserNote> {
     removeFollower(note: IUploadedNote, followerName: string): Promise<Document>;
     removeFollowing(note: IUploadedNote, followingName: string): Promise<Document>;
     getMostRecentNotes(): Promise<Document>;
+    addPro(userId: string) :Promise<Document>;
 }
 
 const UserNoteSchema = new Schema<IUserNote, UserNoteModel>({
@@ -33,6 +35,7 @@ const UserNoteSchema = new Schema<IUserNote, UserNoteModel>({
     notes: [UploadedNoteSchema],
     followers: { type: [String], required: true },
     following: { type: [String], required: true },
+    pro: { type: Boolean, required: false },
 });
 
 UserNoteSchema.static('saveNote', async function saveNote(note: IUploadedNote) {
@@ -95,7 +98,7 @@ UserNoteSchema.static('getMostRecentNotes', async function getMostRecentNotes() 
 
 UserNoteSchema.static('addFollower', function addFollower(userId: string, followerId: string) {
     let displayName = "User " + followerId + " something else";
-    this.findById(followerId)
+    this.findById(followerId)   
     .then((data) => {
         if (data.notes.length > 0) {
             displayName = data.notes[0].userDisplayName;
@@ -133,6 +136,17 @@ UserNoteSchema.static('removeFollowing', function removeFollowing(userId: string
         {_id: userId},
         {$pull: {"following": followingName}})
         .exec()
+});
+
+UserNoteSchema.static('addPro', async function addFollower(userId: string) {
+    console.log("ID IS", userId)
+
+    let temp = await this.findByIdAndUpdate(userId, {$set: {"pro": true}}, {
+        upsert: true,
+        returnDocument: 'after'
+    })
+    console.log("TEMP IS")
+    return temp
 });
 
 const UserNote = model<IUserNote, UserNoteModel>('UserNote', UserNoteSchema);

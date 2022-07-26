@@ -126,6 +126,7 @@ router.post('/stripe-checkout',async function (req: any, res: any) {
         const stripeSession = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             mode: 'payment',
+            client_reference_id: req.body.id,
             line_items: [{price_data: {
                 currency: 'cad',
                 product_data:{
@@ -148,6 +149,9 @@ router.post('/stripe-checkout',async function (req: any, res: any) {
 router.get('/stripe-checkout/success', async (req, res) => {
     const session = await stripe.checkout.sessions.retrieve(req.query.session_id);
     const customer = await stripe.customers.retrieve(session.customer);
+
+    const added = await UserNote.addPro(session.client_reference_id)
+    console.log("ADDED IS", added)
 
     console.log("SESSION IS", session)
     console.log("CUSTOMER IS", customer)
