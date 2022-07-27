@@ -148,27 +148,16 @@ router.post('/stripe-checkout',async function (req: any, res: any) {
 
 router.get('/stripe-checkout/success', async (req, res) => {
     const session = await stripe.checkout.sessions.retrieve(req.query.session_id);
-    const customer = await stripe.customers.retrieve(session.customer);
-
     const added = await UserNote.addPro(session.client_reference_id)
-    console.log("ADDED IS", added)
-
-    console.log("SESSION IS", session)
-    console.log("CUSTOMER IS", customer)
-  
     res.status(200).redirect(`${process.env.CLIENT_URL}?success`);
-    //res.send(`<html><body><h1>Thanks for your order, ${customer.name}!</h1></body></html>`);
   });
 
-  router.get('/stripe-checkout/failure', async (req, res) => {
-   // const session = await stripe.checkout.sessions.retrieve(req.query.session_id);
-    //const customer = await stripe.customers.retrieve(session.customer);
-
-   // console.log("SESSION IS", session)
-   // console.log("CUSTOMER IS", customer)
-  
-    res.status(400).redirect(`${process.env.CLIENT_URL}?Failure`);
-   // res.send(`<html><body><h1>FAILURE  for your order,!</h1></body></html>`);
+  router.get('/getpro/:userId', async (req, res) => {
+    console.log("ROUTE PRO")
+    const {userId} = req.params;
+    const hasPro = await UserNote.getPro(userId)
+    console.log("FINISHED ROUTE", hasPro)
+    return res.send({proStatus: hasPro });
   });
 
 module.exports = router;
