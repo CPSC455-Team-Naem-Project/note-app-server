@@ -153,6 +153,12 @@ router.get('/stripe-checkout/success', async (req, res) => {
     res.status(200).redirect(`${process.env.CLIENT_URL}?success`);
   });
 
+  router.get('/stripe-checkout/failure', async (req, res) => {
+   // const session = await stripe.checkout.sessions.retrieve(req.query.session_id);
+    //const added = await UserNote.addPro(session.client_reference_id)
+    res.status(200).redirect(`${process.env.CLIENT_URL}?failure`);
+  });
+
   router.get('/getpro/:userId', async (req, res) => {
     console.log("ROUTE PRO")
     const {userId} = req.params;
