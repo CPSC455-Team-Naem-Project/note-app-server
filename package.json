@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon --require ts-node/register ./bin/www",
+    "start": "node --require ts-node/register ./bin/www",
+    "start:testing": "nodemon --require ts-node/register ./bin/www",
     "start:test": "mocha --require ts-node/register app.test.ts",
     "build": "tsc",
     "postinstall": "npm run build"
