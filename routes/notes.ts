@@ -4,6 +4,7 @@ require('dotenv').config()
 const express = require('express');
 const router = express.Router();
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
+//Auto deploy test
 
 
 router.post('/upload', async function (req: any, res: any) {
