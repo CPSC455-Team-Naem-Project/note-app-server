@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "start": "nodemon --require ts-node/register ./bin/www",
-    "start:test": "mocha --require ts-node/register app.test.ts"
+    "start:test": "mocha --require ts-node/register app.test.ts",
+    "build": "tsc",
+    "postinstall": "npm run build"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
