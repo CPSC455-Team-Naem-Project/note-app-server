@@ -151,7 +151,6 @@ UserNoteSchema.static('addPro', async function addPro(userId: string) {
 });
 
 UserNoteSchema.static('getPro', async function getPro(userId: string) {
-    console.log("ID IS", userId)
 
     let temp = await this.findOne({_id: userId}).exec()
          
