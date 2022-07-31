@@ -55,10 +55,12 @@ UserNoteSchema.static('saveNote', function saveNote(note) {
         var data;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, this.findByIdAndUpdate(note.userId, { $push: { notes: note } }, {
-                        upsert: true,
-                        returnDocument: 'after'
-                    })];
+                case 0:
+                    console.log("SAVING NOTE", note);
+                    return [4 /*yield*/, this.findByIdAndUpdate(note.userId, { $push: { notes: note } }, {
+                            upsert: true,
+                            returnDocument: 'after'
+                        })];
                 case 1:
                     data = _a.sent();
                     return [2 /*return*/, data.notes[data.notes.length - 1]];

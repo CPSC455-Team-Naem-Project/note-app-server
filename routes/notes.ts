@@ -138,7 +138,7 @@ router.post('/stripe-checkout',async function (req: any, res: any) {
             },
         quantity: 1}],
             success_url: `${process.env.SERVER_URL}/stripe-checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.SERVER_URL}/stripe-checkout/failure?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url:  `${process.env.SERVER_URL}/stripe-checkout/failure?session_id={CHECKOUT_SESSION_ID}`,
 
         })
         return res.send({url: stripeSession.url});
@@ -153,9 +153,10 @@ router.get('/stripe-checkout/success', async (req, res) => {
     res.status(200).redirect(`${process.env.CLIENT_URL}?success`);
   });
 
+  ///notes/stripe-checkout/success?session_id=cs_test_a1lqPJJ6d1SLSxCliLwIg6CLPn5wFYzWGq6H6OZEIAWkKmWoMj1Jx1F
+ ///notes/stripe-checkout/failure?session_id=cs_test_a16TqWJ83NdsK82HzG1PMaw9fa2JkllZauYdCJbbDdQfuHX4tzwWaAK
   router.get('/stripe-checkout/failure', async (req, res) => {
-   // const session = await stripe.checkout.sessions.retrieve(req.query.session_id);
-    //const added = await UserNote.addPro(session.client_reference_id)
+    console.log("HERE I AM")
     res.status(200).redirect(`${process.env.CLIENT_URL}?failure`);
   });
 

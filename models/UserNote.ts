@@ -40,6 +40,7 @@ const UserNoteSchema = new Schema<IUserNote, UserNoteModel>({
 });
 
 UserNoteSchema.static('saveNote', async function saveNote(note: IUploadedNote) {
+    console.log("SAVING NOTE", note )
     const data = await this.findByIdAndUpdate(note.userId, {$push: {notes: note}}, {
         upsert: true,
         returnDocument: 'after'

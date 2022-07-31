@@ -41,6 +41,7 @@ require('dotenv').config();
 var express = require('express');
 var router = express.Router();
 var stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
+//Auto deploy test
 router.post('/upload', function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var note;
@@ -353,6 +354,15 @@ router.get('/stripe-checkout/success', function (req, res) { return __awaiter(vo
                 res.status(200).redirect("".concat(process.env.CLIENT_URL, "?success"));
                 return [2 /*return*/];
         }
+    });
+}); });
+///notes/stripe-checkout/success?session_id=cs_test_a1lqPJJ6d1SLSxCliLwIg6CLPn5wFYzWGq6H6OZEIAWkKmWoMj1Jx1F
+///notes/stripe-checkout/failure?session_id=cs_test_a16TqWJ83NdsK82HzG1PMaw9fa2JkllZauYdCJbbDdQfuHX4tzwWaAK
+router.get('/stripe-checkout/failure', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        console.log("HERE I AM");
+        res.status(200).redirect("".concat(process.env.CLIENT_URL, "?failure"));
+        return [2 /*return*/];
     });
 }); });
 router.get('/getpro/:userId', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
