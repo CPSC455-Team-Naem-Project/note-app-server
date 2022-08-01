@@ -23,6 +23,7 @@ var UploadedNoteSchema = new mongoose_1.Schema({
     course: { type: UploadedNoteCourse, required: true },
     visibility: { type: Boolean, required: true },
     date: { type: String, required: true },
+    rating: { type: Number, required: true },
 });
 exports.UploadedNoteSchema = UploadedNoteSchema;
 //# sourceMappingURL=UploadedFile.js.map

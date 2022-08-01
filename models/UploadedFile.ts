@@ -51,6 +51,8 @@ const UploadedNoteSchema = new Schema<IUploadedNote>({
     course: {type: UploadedNoteCourse, required: true},
     visibility: {type: Boolean, required: true},
     date: {type: String, required: true},
+    rating: {type: Number, required: true},
+
 })
 
 export {UploadedNoteSchema, IUploadedNote}
