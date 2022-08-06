@@ -89,14 +89,20 @@ router.post('/addToFollowersList/:userId/:followerId', async function (req: any,
     res.send(follower);
 });
 
-router.post('/removeFollower/:userId/:followerName', async function (req: any, res: any) {
+router.post('/saveNote', async function (req: any, res: any) {
+    console.log(req.body)
+    const note = await UserNote.saveNoteToSavedNotes(req.body);
+    res.send(note);
+});
+
+router.delete('/removeFollower/:userId/:followerName', async function (req: any, res: any) {
     console.log(req.body);
     const {userId, followerName} = req.params;
     const follower = await UserNote.removeFollower(userId, followerName);
     res.send(follower);
 });
 
-router.post('/removeFollowing/:userId/:followingName', async function (req: any, res: any) {
+router.delete('/removeFollowing/:userId/:followingName', async function (req: any, res: any) {
     console.log(req.body);
     const {userId, followingName} = req.params;
     const follower = await UserNote.removeFollowing(userId, followingName);

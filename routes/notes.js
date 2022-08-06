@@ -227,7 +227,23 @@ router.post('/addToFollowersList/:userId/:followerId', function (req, res) {
         });
     });
 });
-router.post('/removeFollower/:userId/:followerName', function (req, res) {
+router.post('/saveNote', function (req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var note;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    console.log(req.body);
+                    return [4 /*yield*/, UserNote_1.UserNote.saveNoteToSavedNotes(req.body)];
+                case 1:
+                    note = _a.sent();
+                    res.send(note);
+                    return [2 /*return*/];
+            }
+        });
+    });
+});
+router.delete('/removeFollower/:userId/:followerName', function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var _a, userId, followerName, follower;
         return __generator(this, function (_b) {
@@ -244,7 +260,7 @@ router.post('/removeFollower/:userId/:followerName', function (req, res) {
         });
     });
 });
-router.post('/removeFollowing/:userId/:followingName', function (req, res) {
+router.delete('/removeFollowing/:userId/:followingName', function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var _a, userId, followingName, follower;
         return __generator(this, function (_b) {

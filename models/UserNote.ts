@@ -7,6 +7,7 @@ interface IUserNote {
     userId: string;
     userEmail: string;
     notes: IUploadedNote[];
+    savedNotes: IUploadedNote[];
     followers: string[];
     following: string[];
     pro: Boolean
@@ -17,6 +18,7 @@ interface UserNoteModel extends Model<IUserNote> {
     saveNotes(userId: string, notes: IUploadedNote[]): Promise<Document>;
     removeNote(userId: string, noteId: string): Promise<Document>;
     getNote(userId: string, noteId: string): Promise<Document>;
+    saveNoteToSavedNotes(note: IUploadedNote): Promise<Document>;
     editNote(note: IUploadedNote): Promise<Document>;
     findPublicNotes(): Promise<Document>;
     addFollower(note: IUploadedNote, id: string): Promise<Document>;
@@ -34,6 +36,7 @@ const UserNoteSchema = new Schema<IUserNote, UserNoteModel>({
     userId: { type: String, required: true },
     userEmail: { type: String, required: true },
     notes: [UploadedNoteSchema],
+    savedNotes: [UploadedNoteSchema],
     followers: { type: [String], required: true },
     following: { type: [String], required: true },
     pro: { type: Boolean, required: false, default: false },
@@ -74,6 +77,14 @@ UserNoteSchema.static('getNote', async function getNote(userId: string, noteId: 
     res.userDisplayName = data.userDisplayName;
     return res;
 
+});
+
+UserNoteSchema.static('saveNoteToSavedNotes', async function saveNoteToSavedNotes(note: IUploadedNote) {
+    const data = await this.findByIdAndUpdate(note.userId, {$push: {savedNotes: note}}, {
+        upsert: true,
+        returnDocument: 'after'
+    })
+    return data.savedNotes[data.savedNotes.length - 1]
 });
 
 UserNoteSchema.static('editNote', function editNote(note: IUploadedNote) {

@@ -45,6 +45,7 @@ var UserNoteSchema = new mongoose_1.Schema({
     userId: { type: String, required: true },
     userEmail: { type: String, required: true },
     notes: [UploadedFile_1.UploadedNoteSchema],
+    savedNotes: [UploadedFile_1.UploadedNoteSchema],
     followers: { type: [String], required: true },
     following: { type: [String], required: true },
     pro: { type: Boolean, required: false, default: false },
@@ -103,6 +104,22 @@ UserNoteSchema.static('getNote', function getNote(userId, noteId) {
                     res.userEmail = data.userEmail;
                     res.userDisplayName = data.userDisplayName;
                     return [2 /*return*/, res];
+            }
+        });
+    });
+});
+UserNoteSchema.static('saveNoteToSavedNotes', function saveNoteToSavedNotes(note) {
+    return __awaiter(this, void 0, void 0, function () {
+        var data;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, this.findByIdAndUpdate(note.userId, { $push: { savedNotes: note } }, {
+                        upsert: true,
+                        returnDocument: 'after'
+                    })];
+                case 1:
+                    data = _a.sent();
+                    return [2 /*return*/, data.savedNotes[data.savedNotes.length - 1]];
             }
         });
     });
