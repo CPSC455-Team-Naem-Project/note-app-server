@@ -146,6 +146,20 @@ UserNoteSchema.static('findPublicNotes', function findPublicNotes() {
         });
     });
 });
+UserNoteSchema.static('getSavedNotes', function getSavedNotes(userId) {
+    return __awaiter(this, void 0, void 0, function () {
+        var data;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, this.findById(userId).exec()];
+                case 1:
+                    data = _a.sent();
+                    console.log("HERE");
+                    return [2 /*return*/, data.savedNotes];
+            }
+        });
+    });
+});
 UserNoteSchema.static('getMostRecentNotes', function getMostRecentNotes() {
     return __awaiter(this, void 0, void 0, function () {
         var allPublicNotes;

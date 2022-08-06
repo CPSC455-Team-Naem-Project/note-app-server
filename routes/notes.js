@@ -320,9 +320,29 @@ router.get('/search', function (req, res) {
         });
     });
 });
+router.get('/getSavedNotes', function (req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var savedNotes, e_7;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, UserNote_1.UserNote.getSavedNotes()];
+                case 1:
+                    savedNotes = _a.sent();
+                    return [2 /*return*/, res.send(savedNotes)];
+                case 2:
+                    e_7 = _a.sent();
+                    res.status(204).send();
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/];
+            }
+        });
+    });
+});
 router.post('/stripe-checkout', function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var stripeSession, e_7;
+        var stripeSession, e_8;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -349,8 +369,8 @@ router.post('/stripe-checkout', function (req, res) {
                     stripeSession = _a.sent();
                     return [2 /*return*/, res.send({ url: stripeSession.url })];
                 case 3:
-                    e_7 = _a.sent();
-                    res.status(500).send(e_7.message);
+                    e_8 = _a.sent();
+                    res.status(500).send(e_8.message);
                     return [3 /*break*/, 4];
                 case 4: return [2 /*return*/];
             }

@@ -21,6 +21,7 @@ interface UserNoteModel extends Model<IUserNote> {
     saveNoteToSavedNotes(note: IUploadedNote): Promise<Document>;
     editNote(note: IUploadedNote): Promise<Document>;
     findPublicNotes(): Promise<Document>;
+    getSavedNotes(): Promise<Document>;
     addFollower(note: IUploadedNote, id: string): Promise<Document>;
     addToFollowersList(note: IUploadedNote, id: string): Promise<Document>;
     removeFollower(note: IUploadedNote, followerName: string): Promise<Document>;
@@ -102,6 +103,12 @@ UserNoteSchema.static('findPublicNotes', async function findPublicNotes() {
     console.log("ALL NOTES", allNotesArray)
     let publicNotes = allNotesArray.filter(note => note.visibility === true)
     return publicNotes
+});
+
+UserNoteSchema.static('getSavedNotes', async function getSavedNotes(userId: string) {
+    console.log("Getting Saved Notes")
+    let data = await this.findById(userId).exec();
+    return data.savedNotes;
 });
 
 UserNoteSchema.static('getMostRecentNotes', async function getMostRecentNotes() {

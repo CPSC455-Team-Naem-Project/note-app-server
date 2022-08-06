@@ -127,6 +127,16 @@ router.get('/search', async function (req: any, res: any) {
     }
 });
 
+router.get('/getSavedNotes/:userId', async function (req: any, res: any) {
+    try {
+        let {userId} = req.params;
+       let savedNotes = await UserNote.getSavedNotes(userId);
+        return res.send(savedNotes);
+    } catch (e) {
+        res.status(204).send()
+    }
+});
+
 router.post('/stripe-checkout',async function (req: any, res: any) {
     console.log("ID IS", req.body.id)
     try {
