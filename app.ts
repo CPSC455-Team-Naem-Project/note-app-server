@@ -9,7 +9,6 @@ const db = require('./models/db')
 
 const app = express();
 
-//Test
 app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
