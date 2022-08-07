@@ -41,15 +41,12 @@ require('dotenv').config();
 var express = require('express');
 var router = express.Router();
 var stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
-//Auto deploy test
 router.post('/upload', function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var note;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    console.log(req.body);
-                    return [4 /*yield*/, UserNote_1.UserNote.saveNote(req.body)];
+                case 0: return [4 /*yield*/, UserNote_1.UserNote.saveNote(req.body)];
                 case 1:
                     note = _a.sent();
                     res.send(note);
@@ -64,7 +61,6 @@ router.post('/uploadMany', function (req, res) {
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    console.log(req.body);
                     _a = req.body, notes = _a.notes, userId = _a.userId;
                     return [4 /*yield*/, UserNote_1.UserNote.saveNotes(userId, notes)];
                 case 1:
@@ -80,9 +76,7 @@ router.post('/uploadOne', function (req, res) {
         var note;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    console.log(req.body);
-                    return [4 /*yield*/, UserNote_1.UserNote.saveNote(req.body)];
+                case 0: return [4 /*yield*/, UserNote_1.UserNote.saveNote(req.body)];
                 case 1:
                     note = _a.sent();
                     res.send(note);
@@ -300,49 +294,46 @@ router.delete('/deleteByUserIdAndNoteId/:userId/:noteId', function (req, res) { 
         }
     });
 }); });
-router.get('/search', function (req, res) {
+router.post('/search', function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var publicNotes, e_6;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, UserNote_1.UserNote.findPublicNotes()];
+                    return [4 /*yield*/, UserNote_1.UserNote.findPublicNotes(req.body)];
                 case 1:
                     publicNotes = _a.sent();
                     return [2 /*return*/, res.send(publicNotes)];
                 case 2:
                     e_6 = _a.sent();
-                    res.status(204).send();
+                    res.status(500).send({ error: "Something went wrong" });
                     return [3 /*break*/, 3];
                 case 3: return [2 /*return*/];
             }
         });
     });
 });
-router.get('/getSavedNotes', function (req, res) {
+router.get('/getSavedNotes/:userId', function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var savedNotes, e_7;
+        var userId;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    _a.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, UserNote_1.UserNote.getSavedNotes()];
-                case 1:
-                    savedNotes = _a.sent();
-                    return [2 /*return*/, res.send(savedNotes)];
-                case 2:
-                    e_7 = _a.sent();
-                    res.status(204).send();
-                    return [3 /*break*/, 3];
-                case 3: return [2 /*return*/];
+            try {
+                userId = req.params.userId;
+                // let savedNotes = await UserNote.getSavedNotes(userId);
+                //return res.send(savedNotes);
+                return [2 /*return*/, res.send(null)];
             }
+            catch (e) {
+                res.status(204).send();
+            }
+            return [2 /*return*/];
         });
     });
 });
 router.post('/stripe-checkout', function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var stripeSession, e_8;
+        var stripeSession, e_7;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -369,8 +360,8 @@ router.post('/stripe-checkout', function (req, res) {
                     stripeSession = _a.sent();
                     return [2 /*return*/, res.send({ url: stripeSession.url })];
                 case 3:
-                    e_8 = _a.sent();
-                    res.status(500).send(e_8.message);
+                    e_7 = _a.sent();
+                    res.status(500).send(e_7.message);
                     return [3 /*break*/, 4];
                 case 4: return [2 /*return*/];
             }
@@ -392,27 +383,28 @@ router.get('/stripe-checkout/success', function (req, res) { return __awaiter(vo
         }
     });
 }); });
-///notes/stripe-checkout/success?session_id=cs_test_a1lqPJJ6d1SLSxCliLwIg6CLPn5wFYzWGq6H6OZEIAWkKmWoMj1Jx1F
-///notes/stripe-checkout/failure?session_id=cs_test_a16TqWJ83NdsK82HzG1PMaw9fa2JkllZauYdCJbbDdQfuHX4tzwWaAK
 router.get('/stripe-checkout/failure', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        console.log("HERE I AM");
         res.status(200).redirect("".concat(process.env.CLIENT_URL, "?failure"));
         return [2 /*return*/];
     });
 }); });
 router.get('/getpro/:userId', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userId, hasPro;
+    var userId, hasPro, e_8;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                console.log("ROUTE PRO");
+                _a.trys.push([0, 2, , 3]);
                 userId = req.params.userId;
                 return [4 /*yield*/, UserNote_1.UserNote.getPro(userId)];
             case 1:
                 hasPro = _a.sent();
-                console.log("FINISHED ROUTE", hasPro);
                 return [2 /*return*/, res.send({ proStatus: hasPro })];
+            case 2:
+                e_8 = _a.sent();
+                res.status(500).send("Something went wrong");
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
     });
 }); });
