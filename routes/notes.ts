@@ -128,9 +128,10 @@ router.delete('/deleteByUserIdAndNoteId/:userId/:noteId', async (req: any, res: 
     return res.send(await UserNote.removeNote(userId, noteId));
 })
 
-router.get('/search', async function (req: any, res: any) {
+router.post('/search', async function (req: any, res: any) {
     try {
-       let publicNotes = await UserNote.findPublicNotes()
+        console.log(req.body)
+       let publicNotes = await UserNote.findPublicNotes(req.body)
         return res.send(publicNotes);
     } catch (e) {
         res.status(204).send()

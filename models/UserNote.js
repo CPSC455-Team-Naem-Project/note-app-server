@@ -57,10 +57,10 @@ UserNoteSchema.static('saveNote', function saveNote(note) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    console.log("SAVING NOTE", note);
+                    console.log('SAVING NOTE', note);
                     return [4 /*yield*/, this.findByIdAndUpdate(note.userId, { $push: { notes: note } }, {
                             upsert: true,
-                            returnDocument: 'after'
+                            returnDocument: 'after',
                         })];
                 case 1:
                     data = _a.sent();
@@ -76,7 +76,7 @@ UserNoteSchema.static('saveNotes', function saveNotes(userId, notes) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, this.findByIdAndUpdate(userId, { $push: { notes: { $each: notes } } }, {
                         upsert: true,
-                        returnDocument: 'after'
+                        returnDocument: 'after',
                     })];
                 case 1:
                     data = _a.sent();
@@ -104,9 +104,9 @@ UserNoteSchema.static('getNote', function getNote(userId, noteId) {
         var data, res;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, this.findOne({ _id: userId, "notes._id": noteId }, {
+                case 0: return [4 /*yield*/, this.findOne({ _id: userId, 'notes._id': noteId }, {
                         _id: false,
-                        "notes.$": 1
+                        'notes.$': 1,
                     }).exec()];
                 case 1:
                     data = _a.sent();
@@ -139,7 +139,7 @@ UserNoteSchema.static('saveNoteToSavedNotes', function saveNoteToSavedNotes(note
             switch (_a.label) {
                 case 0: return [4 /*yield*/, this.findByIdAndUpdate(note.userId, { $push: { savedNotes: note } }, {
                         upsert: true,
-                        returnDocument: 'after'
+                        returnDocument: 'after',
                     })];
                 case 1:
                     data = _a.sent();
@@ -149,22 +149,28 @@ UserNoteSchema.static('saveNoteToSavedNotes', function saveNoteToSavedNotes(note
     });
 });
 UserNoteSchema.static('editNote', function editNote(note) {
-    return this.findOneAndUpdate({ _id: note.userId, "notes._id": note._id }, { $set: { "notes.$": note } })
-        .exec();
+    return this.findOneAndUpdate({ _id: note.userId, 'notes._id': note._id }, { $set: { 'notes.$': note } }).exec();
 });
-UserNoteSchema.static('findPublicNotes', function findPublicNotes() {
+UserNoteSchema.static('findPublicNotes', function findPublicNotes(filteredObject) {
     return __awaiter(this, void 0, void 0, function () {
-        var data, allNotes, allNotesArray, publicNotes;
+        var ratingValue, labelValue, id, data, allNotes, allNotesArray, publicNotes;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, this.find({ "notes.visibility": true }).exec()];
+                case 0:
+                    ratingValue = filteredObject.ratingValue, labelValue = filteredObject.labelValue, id = filteredObject.id;
+                    return [4 /*yield*/, this.find({ "_id": { $ne: id } }).exec()];
                 case 1:
                     data = _a.sent();
-                    console.log("DATA IS", data);
                     allNotes = data.map(function (note) { return note.notes; });
                     allNotesArray = allNotes.flat();
-                    console.log("ALL NOTES", allNotesArray);
                     publicNotes = allNotesArray.filter(function (note) { return note.visibility === true; });
+                    if (labelValue !== null) {
+                        // @ts-ignore
+                        publicNotes = publicNotes.filter(function (note) { return note.rating >= ratingValue && note.course.name === labelValue.name; });
+                    }
+                    else {
+                        publicNotes = publicNotes.filter(function (note) { return note.rating >= ratingValue; });
+                    }
                     return [2 /*return*/, publicNotes];
             }
         });
@@ -187,48 +193,38 @@ UserNoteSchema.static('getSavedNotes', function getSavedNotes(userId) {
 });
 UserNoteSchema.static('getMostRecentNotes', function getMostRecentNotes() {
     return __awaiter(this, void 0, void 0, function () {
-        var allPublicNotes;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, this.findPublicNotes()];
-                case 1:
-                    allPublicNotes = _a.sent();
-                    return [2 /*return*/, allPublicNotes];
-            }
+            //  let allPublicNotes = await this.findPublicNotes(filterObject: filterObject);
+            //return allPublicNotes;
+            return [2 /*return*/, null];
         });
     });
 });
 UserNoteSchema.static('addFollower', function addFollower(userId, followerId) {
     var _this = this;
-    var displayName = "User " + followerId + " something else";
-    this.findById(followerId)
-        .then(function (data) {
+    var displayName = 'User ' + followerId + ' something else';
+    this.findById(followerId).then(function (data) {
         if (data.notes.length > 0) {
             displayName = data.notes[0].userDisplayName;
         }
-        return _this.findOneAndUpdate({ _id: userId }, { $push: { "following": displayName } })
-            .exec();
+        return _this.findOneAndUpdate({ _id: userId }, { $push: { following: displayName } }).exec();
     });
 });
 UserNoteSchema.static('addToFollowersList', function addToFollowersList(userId, followerId) {
     var _this = this;
-    var displayName = "User " + followerId;
-    this.findById(userId)
-        .then(function (data) {
+    var displayName = 'User ' + followerId;
+    this.findById(userId).then(function (data) {
         if (data.notes.length > 0) {
             displayName = data.notes[0].userDisplayName;
         }
-        return _this.findOneAndUpdate({ _id: followerId }, { $push: { "followers": displayName } })
-            .exec();
+        return _this.findOneAndUpdate({ _id: followerId }, { $push: { followers: displayName } }).exec();
     });
 });
 UserNoteSchema.static('removeFollower', function removeFollower(userId, followerName) {
-    return this.findOneAndUpdate({ _id: userId }, { $pull: { "followers": followerName } })
-        .exec();
+    return this.findOneAndUpdate({ _id: userId }, { $pull: { followers: followerName } }).exec();
 });
 UserNoteSchema.static('removeFollowing', function removeFollowing(userId, followingName) {
-    return this.findOneAndUpdate({ _id: userId }, { $pull: { "following": followingName } })
-        .exec();
+    return this.findOneAndUpdate({ _id: userId }, { $pull: { following: followingName } }).exec();
 });
 UserNoteSchema.static('addPro', function addPro(userId) {
     return __awaiter(this, void 0, void 0, function () {
@@ -236,14 +232,14 @@ UserNoteSchema.static('addPro', function addPro(userId) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    console.log("ID IS", userId);
-                    return [4 /*yield*/, this.findByIdAndUpdate(userId, { $set: { "pro": true } }, {
+                    console.log('ID IS', userId);
+                    return [4 /*yield*/, this.findByIdAndUpdate(userId, { $set: { pro: true } }, {
                             upsert: true,
-                            returnDocument: 'after'
+                            returnDocument: 'after',
                         })];
                 case 1:
                     temp = _a.sent();
-                    console.log("TEMP IS");
+                    console.log('TEMP IS');
                     return [2 /*return*/, temp];
             }
         });
@@ -255,7 +251,7 @@ UserNoteSchema.static('getPro', function getPro(userId) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    console.log("ID IS", userId);
+                    console.log('ID IS', userId);
                     return [4 /*yield*/, this.findOne({ _id: userId }).exec()];
                 case 1:
                     temp = _a.sent();
