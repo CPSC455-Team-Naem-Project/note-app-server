@@ -133,8 +133,29 @@ router.get('/getAllNotesById/:userId', function (req, res) { return __awaiter(vo
         }
     });
 }); });
+router.get('/getUserIdByNoteId/:noteId', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var noteId, data, e_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                noteId = req.params.noteId;
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, UserNote_1.UserNote.getUserIdByNoteId(noteId)];
+            case 2:
+                data = _a.sent();
+                return [2 /*return*/, res.send(data)];
+            case 3:
+                e_3 = _a.sent();
+                res.status(204).send();
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); });
 router.get('/getMostRecentNotes', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var data, e_3;
+    var data, e_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -144,7 +165,7 @@ router.get('/getMostRecentNotes', function (req, res) { return __awaiter(void 0,
                 data = _a.sent();
                 return [2 /*return*/, res.send(data)];
             case 2:
-                e_3 = _a.sent();
+                e_4 = _a.sent();
                 res.status(204).send();
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
@@ -152,7 +173,7 @@ router.get('/getMostRecentNotes', function (req, res) { return __awaiter(void 0,
     });
 }); });
 router.get('/getFollowersById/:userId', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userId, data, e_4;
+    var userId, data, e_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -165,7 +186,7 @@ router.get('/getFollowersById/:userId', function (req, res) { return __awaiter(v
                 data = _a.sent();
                 return [2 /*return*/, res.send(data.followers)];
             case 3:
-                e_4 = _a.sent();
+                e_5 = _a.sent();
                 res.status(204).send();
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
@@ -173,7 +194,7 @@ router.get('/getFollowersById/:userId', function (req, res) { return __awaiter(v
     });
 }); });
 router.get('/getFollowingById/:userId', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userId, data, e_5;
+    var userId, data, e_6;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -186,7 +207,7 @@ router.get('/getFollowingById/:userId', function (req, res) { return __awaiter(v
                 data = _a.sent();
                 return [2 /*return*/, res.send(data.following)];
             case 3:
-                e_5 = _a.sent();
+                e_6 = _a.sent();
                 res.status(204).send();
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
@@ -302,7 +323,7 @@ router.delete('/deleteByUserIdAndNoteId/:userId/:noteId', function (req, res) { 
 }); });
 router.get('/search', function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var publicNotes, e_6;
+        var publicNotes, e_7;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -312,7 +333,7 @@ router.get('/search', function (req, res) {
                     publicNotes = _a.sent();
                     return [2 /*return*/, res.send(publicNotes)];
                 case 2:
-                    e_6 = _a.sent();
+                    e_7 = _a.sent();
                     res.status(204).send();
                     return [3 /*break*/, 3];
                 case 3: return [2 /*return*/];
@@ -320,19 +341,21 @@ router.get('/search', function (req, res) {
         });
     });
 });
-router.get('/getSavedNotes', function (req, res) {
+router.get('/getSavedNotes/:userId', function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var savedNotes, e_7;
+        var userId, savedNotes, e_8;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, UserNote_1.UserNote.getSavedNotes()];
+                    console.log("HERE");
+                    userId = req.params.userId;
+                    return [4 /*yield*/, UserNote_1.UserNote.getSavedNotes(userId)];
                 case 1:
                     savedNotes = _a.sent();
                     return [2 /*return*/, res.send(savedNotes)];
                 case 2:
-                    e_7 = _a.sent();
+                    e_8 = _a.sent();
                     res.status(204).send();
                     return [3 /*break*/, 3];
                 case 3: return [2 /*return*/];
@@ -342,7 +365,7 @@ router.get('/getSavedNotes', function (req, res) {
 });
 router.post('/stripe-checkout', function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var stripeSession, e_8;
+        var stripeSession, e_9;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -369,8 +392,8 @@ router.post('/stripe-checkout', function (req, res) {
                     stripeSession = _a.sent();
                     return [2 /*return*/, res.send({ url: stripeSession.url })];
                 case 3:
-                    e_8 = _a.sent();
-                    res.status(500).send(e_8.message);
+                    e_9 = _a.sent();
+                    res.status(500).send(e_9.message);
                     return [3 /*break*/, 4];
                 case 4: return [2 /*return*/];
             }

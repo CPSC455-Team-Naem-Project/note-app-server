@@ -46,6 +46,16 @@ router.get('/getAllNotesById/:userId', async (req: any, res: any) => {
     }
 })
 
+router.get('/getUserIdByNoteId/:noteId', async (req: any, res: any) => {
+    const {noteId} = req.params;
+    try {
+        const data = await UserNote.getUserIdByNoteId(noteId)
+        return res.send(data);
+    } catch (e) {
+        res.status(204).send()
+    }
+})
+
 router.get('/getMostRecentNotes', async (req: any, res: any) => {
     try {
         const data = await UserNote.getMostRecentNotes();
@@ -129,8 +139,9 @@ router.get('/search', async function (req: any, res: any) {
 
 router.get('/getSavedNotes/:userId', async function (req: any, res: any) {
     try {
+        console.log("HERE")
         let {userId} = req.params;
-       let savedNotes = await UserNote.getSavedNotes(userId);
+        let savedNotes = await UserNote.getSavedNotes(userId);
         return res.send(savedNotes);
     } catch (e) {
         res.status(204).send()

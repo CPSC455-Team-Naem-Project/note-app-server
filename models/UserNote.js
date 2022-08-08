@@ -86,7 +86,18 @@ UserNoteSchema.static('saveNotes', function saveNotes(userId, notes) {
     });
 });
 UserNoteSchema.static('removeNote', function removeNote(userId, noteId) {
-    return this.findByIdAndUpdate(userId, { $pull: { notes: { _id: noteId } } }, { returnDocument: 'after' });
+    return __awaiter(this, void 0, void 0, function () {
+        var note;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, this.findByIdAndUpdate(userId, { $pull: { savedNotes: { _id: noteId } } })];
+                case 1:
+                    note = _a.sent();
+                    console.log("DELETED NOTE FROM SAVED NOTES", note);
+                    return [2 /*return*/, this.findByIdAndUpdate(userId, { $pull: { notes: { _id: noteId } } }, { returnDocument: 'after' })];
+            }
+        });
+    });
 });
 UserNoteSchema.static('getNote', function getNote(userId, noteId) {
     return __awaiter(this, void 0, void 0, function () {
@@ -104,6 +115,19 @@ UserNoteSchema.static('getNote', function getNote(userId, noteId) {
                     res.userEmail = data.userEmail;
                     res.userDisplayName = data.userDisplayName;
                     return [2 /*return*/, res];
+            }
+        });
+    });
+});
+UserNoteSchema.static('getUserIdByNoteId', function getUserIdByNoteId(noteId) {
+    return __awaiter(this, void 0, void 0, function () {
+        var data;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, this.findOne({ "notes._id": noteId }).exec()];
+                case 1:
+                    data = _a.sent();
+                    return [2 /*return*/, data._id];
             }
         });
     });
@@ -151,10 +175,11 @@ UserNoteSchema.static('getSavedNotes', function getSavedNotes(userId) {
         var data;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, this.findById(userId).exec()];
+                case 0:
+                    console.log("Getting Saved Notes");
+                    return [4 /*yield*/, this.findById(userId).exec()];
                 case 1:
                     data = _a.sent();
-                    console.log("HERE");
                     return [2 /*return*/, data.savedNotes];
             }
         });
