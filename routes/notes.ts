@@ -59,6 +59,7 @@ router.get('/getUserIdByNoteId/:noteId', async (req: any, res: any) => {
 router.get('/getMostRecentNotes', async (req: any, res: any) => {
     try {
         const data = await UserNote.getMostRecentNotes();
+        res.header("Access-Control-Allow-Origin", "*");
         return res.send(data);
     } catch (e) {
         res.status(204).send()
