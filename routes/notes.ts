@@ -28,6 +28,7 @@ router.post('/uploadOne', async function (req: any, res: any) {
 
 router.get('/getByUserIdAndNoteId/:userId/:noteId', async (req: any, res: any) => {
     const {noteId, userId} = req.params;
+    res.header("Access-Control-Allow-Origin", "*");
     try {
         const note = await UserNote.getNote(userId, noteId)
         return res.send(note);
@@ -40,9 +41,15 @@ router.get('/getAllNotesById/:userId', async (req: any, res: any) => {
     const {userId} = req.params;
     try {
         const data = await UserNote.findById(userId)
+        res.header("Access-Control-Allow-Origin", "*");
+        console.log("DATA IS", data)
+        if (data  === null){
+            console.log("NULL HERE")
+            return res.send([]);
+        }
         return res.send(data.notes);
     } catch (e) {
-        res.status(204).send()
+        res.status(204).send([])
     }
 })
 
@@ -52,7 +59,7 @@ router.get('/getUserIdByNoteId/:noteId', async (req: any, res: any) => {
         const data = await UserNote.getUserIdByNoteId(noteId)
         return res.send(data);
     } catch (e) {
-        res.status(204).send()
+        res.status(204).send([])
     }
 })
 
@@ -68,11 +75,17 @@ router.get('/getMostRecentNotes', async (req: any, res: any) => {
 
 router.get('/getFollowersById/:userId', async (req: any, res: any) => {
     const {userId} = req.params;
+    res.header("Access-Control-Allow-Origin", "*");
     try {
         const data = await UserNote.findById(userId)
-        return res.send(data.followers);
+        if (data  === null){
+            console.log("NULL HERE")
+            return res.send([]);
+        } else{
+            return res.send(data.followers);
+        }
     } catch (e) {
-        res.status(204).send()
+        res.status(204).send([])
     }
 })
 
@@ -182,19 +195,23 @@ router.get('/stripe-checkout/success', async (req, res) => {
     res.status(200).redirect(`${process.env.CLIENT_URL}?success`);
   });
 
-  ///notes/stripe-checkout/success?session_id=cs_test_a1lqPJJ6d1SLSxCliLwIg6CLPn5wFYzWGq6H6OZEIAWkKmWoMj1Jx1F
- ///notes/stripe-checkout/failure?session_id=cs_test_a16TqWJ83NdsK82HzG1PMaw9fa2JkllZauYdCJbbDdQfuHX4tzwWaAK
   router.get('/stripe-checkout/failure', async (req, res) => {
     console.log("HERE I AM")
     res.status(200).redirect(`${process.env.CLIENT_URL}?failure`);
   });
 
   router.get('/getpro/:userId', async (req, res) => {
-    console.log("ROUTE PRO")
+try{
+    res.header("Access-Control-Allow-Origin", "*");
     const {userId} = req.params;
     const hasPro = await UserNote.getPro(userId)
     console.log("FINISHED ROUTE", hasPro)
     return res.send({proStatus: hasPro });
+} catch (e){
+    res.status(204).send({proStatus: false })
+
+}
+
   });
 
 module.exports = router;
