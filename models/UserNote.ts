@@ -24,10 +24,11 @@ interface UserNoteModel extends Model<IUserNote> {
     saveNotes(userId: string, notes: IUploadedNote[]): Promise<Document>;
     removeNote(userId: string, noteId: string): Promise<Document>;
     getNote(userId: string, noteId: string): Promise<Document>;
-    saveNoteToSavedNotes(note: IUploadedNote): Promise<Document>;
+    saveNoteToSavedNotes(userId: string, note: IUploadedNote): Promise<Document>;
     editNote(note: IUploadedNote): Promise<Document>;
     findPublicNotes(filteredObject: any): Promise<Document>;
     getSavedNotes(userId: string): Promise<Document>;
+    unsaveNote(noteId: string): Promise<Document>;
     addFollower(note: IUploadedNote, id: string): Promise<Document>;
     addToFollowersList(note: IUploadedNote, id: string): Promise<Document>;
     removeFollower(note: IUploadedNote, followerName: string): Promise<Document>;
@@ -81,6 +82,11 @@ UserNoteSchema.static('removeNote', async function removeNote(userId: string, no
     return this.findByIdAndUpdate(userId, {$pull: {notes: {_id: noteId}}}, {returnDocument: 'after'})
 });
 
+UserNoteSchema.static('unsaveNote', async function unsaveNote(noteId: string) {
+    console.log("ABOUT TO DELETE SAVED NOTE", noteId)
+    await this.findOneAndDelete({$pull: {savedNotes: {_id: noteId}}})
+});
+
 UserNoteSchema.static('getNote', async function getNote(userId: string, noteId: string) {
     const data = await this.findOne(
       { _id: userId, 'notes._id': noteId },
@@ -102,8 +108,8 @@ UserNoteSchema.static('getUserIdByNoteId', async function getUserIdByNoteId(note
 });
 
 
-UserNoteSchema.static('saveNoteToSavedNotes', async function saveNoteToSavedNotes(note: IUploadedNote) {
-    const data = await this.findByIdAndUpdate(note.userId, {$push: {savedNotes: note}}, {
+UserNoteSchema.static('saveNoteToSavedNotes', async function saveNoteToSavedNotes(userId: string, note: IUploadedNote) {
+    const data = await this.findByIdAndUpdate(userId, {$push: {savedNotes: note}}, {
         upsert: true,
         returnDocument: 'after',
       }
@@ -121,10 +127,10 @@ UserNoteSchema.static('editNote', function editNote(note: IUploadedNote) {
 
 UserNoteSchema.static('findPublicNotes', async function findPublicNotes(filteredObject: any) {
     const { ratingValue, labelValue, id} = filteredObject
-    console.log(filteredObject); 
-    console.log(ratingValue);
-    console.log(labelValue);
-    console.log(id);
+    // console.log(filteredObject); 
+    // console.log(ratingValue);
+    // console.log(labelValue);
+    // console.log(id);
   let data = await this.find({ "_id": { $ne: id } }).exec();
   let allNotes = data.map((note) => note.notes);
   let allNotesArray = allNotes.flat();
@@ -233,8 +239,10 @@ UserNoteSchema.static('getPro', async function getPro(userId: string) {
   console.log('ID IS', userId);
 
   let temp = await this.findOne({ _id: userId }).exec();
-
-  return temp.pro;
+  if (temp) {
+    return temp.pro
+  }
+  return false;
 });
 
 const UserNote = model<IUserNote, UserNoteModel>('UserNote', UserNoteSchema);

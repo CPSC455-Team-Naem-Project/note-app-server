@@ -100,10 +100,17 @@ router.post('/addToFollowersList/:userId/:followerId', async function (req: any,
     res.send(follower);
 });
 
-router.post('/saveNote', async function (req: any, res: any) {
-    console.log(req.body)
-    const note = await UserNote.saveNoteToSavedNotes(req.body);
+router.post('/saveNote:/userId', async function (req: any, res: any) {
+    console.log("Note to be saved", req.body)
+    const {userId} = req.params
+    const note = await UserNote.saveNoteToSavedNotes(userId, req.body);
     res.send(note);
+});
+
+router.delete('/unsaveNote/:noteId', async function (req: any, res: any) {
+    const {noteId} = req.params;
+    await UserNote.unsaveNote(noteId);
+    res.status(204).send()
 });
 
 router.delete('/removeFollower/:userId/:followerName', async function (req: any, res: any) {
