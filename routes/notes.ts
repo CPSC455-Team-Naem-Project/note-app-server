@@ -119,16 +119,17 @@ router.post('/addToFollowersList/:userId/:followerId', async function (req: any,
     res.send(follower);
 });
 
-router.post('/saveNote:/userId', async function (req: any, res: any) {
-    console.log("Note to be saved", req.body)
-    const {userId} = req.params
+router.post('/saveNote/:userId', async function (req: any, res: any) {
+    res.header("Access-Control-Allow-Origin", "*");
+    console.log("ABOUT TO SAVE NOTE");
+    const { userId } = req.params;
     const note = await UserNote.saveNoteToSavedNotes(userId, req.body);
     res.send(note);
 });
 
-router.delete('/unsaveNote/:noteId', async function (req: any, res: any) {
-    const {noteId} = req.params;
-    await UserNote.unsaveNote(noteId);
+router.delete('/unsaveNote/:userId/:noteId', async function (req: any, res: any) {
+    const { userId, noteId } = req.params;
+    await UserNote.unsaveNote(userId, noteId);
     res.status(204).send()
 });
 

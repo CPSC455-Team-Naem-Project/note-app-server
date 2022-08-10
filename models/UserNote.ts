@@ -28,7 +28,7 @@ interface UserNoteModel extends Model<IUserNote> {
     editNote(note: IUploadedNote): Promise<Document>;
     findPublicNotes(filteredObject: any): Promise<Document>;
     getSavedNotes(userId: string): Promise<Document>;
-    unsaveNote(noteId: string): Promise<Document>;
+    unsaveNote(userId: string, noteId: string): Promise<Document>;
     addFollower(note: IUploadedNote, id: string): Promise<Document>;
     addToFollowersList(note: IUploadedNote, id: string): Promise<Document>;
     removeFollower(note: IUploadedNote, followerName: string): Promise<Document>;
@@ -82,9 +82,9 @@ UserNoteSchema.static('removeNote', async function removeNote(userId: string, no
     return this.findByIdAndUpdate(userId, {$pull: {notes: {_id: noteId}}}, {returnDocument: 'after'})
 });
 
-UserNoteSchema.static('unsaveNote', async function unsaveNote(noteId: string) {
-    console.log("ABOUT TO DELETE SAVED NOTE", noteId)
-    await this.findOneAndDelete({$pull: {savedNotes: {_id: noteId}}})
+UserNoteSchema.static('unsaveNote', async function unsaveNote(userId: string, noteId: string) {
+    console.log("ABOUT TO UN-SAVE NOTE ", noteId)
+    await this.findByIdAndUpdate(userId, {$pull: {savedNotes: {_id: noteId}}})
 });
 
 UserNoteSchema.static('getNote', async function getNote(userId: string, noteId: string) {
@@ -109,12 +109,15 @@ UserNoteSchema.static('getUserIdByNoteId', async function getUserIdByNoteId(note
 
 
 UserNoteSchema.static('saveNoteToSavedNotes', async function saveNoteToSavedNotes(userId: string, note: IUploadedNote) {
-    const data = await this.findByIdAndUpdate(userId, {$push: {savedNotes: note}}, {
-        upsert: true,
-        returnDocument: 'after',
-      }
-    );
-    return data.savedNotes[data.savedNotes.length - 1];
+  const data = await this.findByIdAndUpdate(
+    userId,
+    { $push: { savedNotes: note } },
+    {
+      upsert: true,
+      returnDocument: 'after',
+    }
+  );
+  return data.savedNotes[data.savedNotes.length - 1];
   }
 );
 
