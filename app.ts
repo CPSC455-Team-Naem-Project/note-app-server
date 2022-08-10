@@ -5,7 +5,7 @@ const logger = require('morgan');
 const cors = require('cors');
 
 const notesRouter = require('./routes/notes');
-const db = require('./models/db')
+const db = require('./models/db');
 
 const app = express();
 
@@ -19,4 +19,3 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/notes', notesRouter);
 
 module.exports = app;
-

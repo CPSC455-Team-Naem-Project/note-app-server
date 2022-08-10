@@ -1,12 +1,6 @@
 import { Model, model, Schema, Types } from 'mongoose';
 import { IUploadedNote, UploadedNoteSchema } from './UploadedFile';
 
-interface FilterObject {
-  ratingValue: number;
-  labelValue: string;
-  id: string;
-}
-
 interface IUserNote {
   _id: string;
   userDisplayName: string;
@@ -20,23 +14,26 @@ interface IUserNote {
 }
 
 interface UserNoteModel extends Model<IUserNote> {
-    saveNote(note: IUploadedNote): Promise<Document>;
-    saveNotes(userId: string, notes: IUploadedNote[]): Promise<Document>;
-    removeNote(userId: string, noteId: string): Promise<Document>;
-    getNote(userId: string, noteId: string): Promise<Document>;
-    saveNoteToSavedNotes(userId: string, note: IUploadedNote): Promise<Document>;
-    editNote(note: IUploadedNote): Promise<Document>;
-    findPublicNotes(filteredObject: any): Promise<Document>;
-    getSavedNotes(userId: string): Promise<Document>;
-    unsaveNote(userId: string, noteId: string): Promise<Document>;
-    addFollower(note: IUploadedNote, id: string): Promise<Document>;
-    addToFollowersList(note: IUploadedNote, id: string): Promise<Document>;
-    removeFollower(note: IUploadedNote, followerName: string): Promise<Document>;
-    removeFollowing(note: IUploadedNote, followingName: string): Promise<Document>;
-    getMostRecentNotes(): Promise<Document>;
-    addPro(userId: string) :Promise<Document>;
-    getPro(userId: string) :Promise<Document>;
-    getUserIdByNoteId(noteId: string) :Promise<Document>;
+  saveNote(note: IUploadedNote): Promise<Document>;
+  saveNotes(userId: string, notes: IUploadedNote[]): Promise<Document>;
+  removeNote(userId: string, noteId: string): Promise<Document>;
+  getNote(userId: string, noteId: string): Promise<Document>;
+  saveNoteToSavedNotes(userId: string, note: IUploadedNote): Promise<Document>;
+  editNote(note: IUploadedNote): Promise<Document>;
+  findPublicNotes(filteredObject: any): Promise<Document>;
+  getSavedNotes(userId: string): Promise<Document>;
+  unsaveNote(userId: string, noteId: string): Promise<Document>;
+  addFollower(note: IUploadedNote, id: string): Promise<Document>;
+  addToFollowersList(note: IUploadedNote, id: string): Promise<Document>;
+  removeFollower(note: IUploadedNote, followerName: string): Promise<Document>;
+  removeFollowing(
+    note: IUploadedNote,
+    followingName: string
+  ): Promise<Document>;
+  getMostRecentNotes(): Promise<Document>;
+  addPro(userId: string): Promise<Document>;
+  getPro(userId: string): Promise<Document>;
+  getUserIdByNoteId(noteId: string): Promise<Document>;
 }
 
 const UserNoteSchema = new Schema<IUserNote, UserNoteModel>({
@@ -52,7 +49,6 @@ const UserNoteSchema = new Schema<IUserNote, UserNoteModel>({
 });
 
 UserNoteSchema.static('saveNote', async function saveNote(note: IUploadedNote) {
-  console.log('SAVING NOTE', note);
   const data = await this.findByIdAndUpdate(
     note.userId,
     { $push: { notes: note } },
@@ -72,22 +68,39 @@ UserNoteSchema.static(
       { $push: { notes: { $each: notes } } },
       {
         upsert: true,
-        returnDocument: 'after'
-    })
-    return data.notes
-});
+        returnDocument: 'after',
+      }
+    );
+    return data.notes;
+  }
+);
 
-UserNoteSchema.static('removeNote', async function removeNote(userId: string, noteId: string) {
-    await this.findByIdAndUpdate(userId, {$pull: {savedNotes: {_id: noteId}}})
-    return this.findByIdAndUpdate(userId, {$pull: {notes: {_id: noteId}}}, {returnDocument: 'after'})
-});
+UserNoteSchema.static(
+  'removeNote',
+  async function removeNote(userId: string, noteId: string) {
+    await this.findByIdAndUpdate(userId, {
+      $pull: { savedNotes: { _id: noteId } },
+    });
+    return this.findByIdAndUpdate(
+      userId,
+      { $pull: { notes: { _id: noteId } } },
+      { returnDocument: 'after' }
+    );
+  }
+);
 
-UserNoteSchema.static('unsaveNote', async function unsaveNote(userId: string, noteId: string) {
-    console.log("ABOUT TO UN-SAVE NOTE ", noteId)
-    await this.findByIdAndUpdate(userId, {$pull: {savedNotes: {_id: noteId}}})
-});
+UserNoteSchema.static(
+  'unsaveNote',
+  async function unsaveNote(userId: string, noteId: string) {
+    await this.findByIdAndUpdate(userId, {
+      $pull: { savedNotes: { _id: noteId } },
+    });
+  }
+);
 
-UserNoteSchema.static('getNote', async function getNote(userId: string, noteId: string) {
+UserNoteSchema.static(
+  'getNote',
+  async function getNote(userId: string, noteId: string) {
     const data = await this.findOne(
       { _id: userId, 'notes._id': noteId },
       {
@@ -100,24 +113,29 @@ UserNoteSchema.static('getNote', async function getNote(userId: string, noteId: 
     res.userEmail = data.userEmail;
     res.userDisplayName = data.userDisplayName;
     return res;
-});
+  }
+);
 
-UserNoteSchema.static('getUserIdByNoteId', async function getUserIdByNoteId(noteId: string) {
-    const data = await this.findOne({"notes._id": noteId}).exec()
+UserNoteSchema.static(
+  'getUserIdByNoteId',
+  async function getUserIdByNoteId(noteId: string) {
+    const data = await this.findOne({ 'notes._id': noteId }).exec();
     return data._id;
-});
+  }
+);
 
-
-UserNoteSchema.static('saveNoteToSavedNotes', async function saveNoteToSavedNotes(userId: string, note: IUploadedNote) {
-  const data = await this.findByIdAndUpdate(
-    userId,
-    { $push: { savedNotes: note } },
-    {
-      upsert: true,
-      returnDocument: 'after',
-    }
-  );
-  return data.savedNotes[data.savedNotes.length - 1];
+UserNoteSchema.static(
+  'saveNoteToSavedNotes',
+  async function saveNoteToSavedNotes(userId: string, note: IUploadedNote) {
+    const data = await this.findByIdAndUpdate(
+      userId,
+      { $push: { savedNotes: note } },
+      {
+        upsert: true,
+        returnDocument: 'after',
+      }
+    );
+    return data.savedNotes[data.savedNotes.length - 1];
   }
 );
 
@@ -128,31 +146,34 @@ UserNoteSchema.static('editNote', function editNote(note: IUploadedNote) {
   ).exec();
 });
 
-UserNoteSchema.static('findPublicNotes', async function findPublicNotes(filteredObject: any) {
-    const { ratingValue, labelValue, id} = filteredObject
-    // console.log(filteredObject); 
-    // console.log(ratingValue);
-    // console.log(labelValue);
-    // console.log(id);
-  let data = await this.find({ "_id": { $ne: id } }).exec();
-  let allNotes = data.map((note) => note.notes);
-  let allNotesArray = allNotes.flat();
-  
-  let publicNotes = allNotesArray.filter((note) => note.visibility === true)
+UserNoteSchema.static(
+  'findPublicNotes',
+  async function findPublicNotes(filteredObject: any) {
+    const { ratingValue, labelValue, id } = filteredObject;
+    let data = await this.find({ _id: { $ne: id } }).exec();
+    let allNotes = data.map((note) => note.notes);
+    let allNotesArray = allNotes.flat();
 
-  if(labelValue !==  null) {
-    // @ts-ignore
-    publicNotes = publicNotes.filter( note => note.rating >= ratingValue && note.course.name === labelValue.name  )
-  } else{
-    publicNotes = publicNotes.filter( (note: any) => note.rating >= ratingValue  )
+    let publicNotes = allNotesArray.filter((note) => note.visibility === true);
+
+    if (labelValue !== null) {
+      // @ts-ignore
+      publicNotes = publicNotes.filter(
+        (note) =>
+          note.rating >= ratingValue && note.course.name === labelValue.name
+      );
+    } else {
+      publicNotes = publicNotes.filter(
+        (note: any) => note.rating >= ratingValue
+      );
+    }
+    return publicNotes;
   }
-  return publicNotes;
-});
+);
 
 UserNoteSchema.static(
   'getSavedNotes',
   async function getSavedNotes(userId: string) {
-    console.log('Getting Saved Notes');
     let data = await this.findById(userId).exec();
     return data.savedNotes;
   }
@@ -161,13 +182,11 @@ UserNoteSchema.static(
 UserNoteSchema.static(
   'getMostRecentNotes',
   async function getMostRecentNotes() {
-    let data = await this.find({"notes.visibility":  true}).exec()
-    console.log("DATA IS", data)
-    let allNotes = data.map(note =>note.notes)
-    let allNotesArray = allNotes.flat()
-    console.log("ALL NOTES", allNotesArray)
-    let publicNotes = allNotesArray.filter(note => note.visibility === true)
-    return publicNotes
+    let data = await this.find({ 'notes.visibility': true }).exec();
+    let allNotes = data.map((note) => note.notes);
+    let allNotesArray = allNotes.flat();
+    let publicNotes = allNotesArray.filter((note) => note.visibility === true);
+    return publicNotes;
   }
 );
 
@@ -224,8 +243,6 @@ UserNoteSchema.static(
 );
 
 UserNoteSchema.static('addPro', async function addPro(userId: string) {
-  console.log('ID IS', userId);
-
   let temp = await this.findByIdAndUpdate(
     userId,
     { $set: { pro: true } },
@@ -234,16 +251,13 @@ UserNoteSchema.static('addPro', async function addPro(userId: string) {
       returnDocument: 'after',
     }
   );
-  console.log('TEMP IS');
   return temp;
 });
 
 UserNoteSchema.static('getPro', async function getPro(userId: string) {
-  console.log('ID IS', userId);
-
   let temp = await this.findOne({ _id: userId }).exec();
   if (temp) {
-    return temp.pro
+    return temp.pro;
   }
   return false;
 });
