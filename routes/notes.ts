@@ -8,12 +8,14 @@ const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
 
 
 router.post('/upload', async function (req: any, res: any) {
+    res.header("Access-Control-Allow-Origin", "*");
     console.log(req.body)
     const note = await UserNote.saveNote(req.body);
     res.send(note);
 });
 
 router.post('/uploadMany', async function (req: any, res: any) {
+    res.header("Access-Control-Allow-Origin", "*");
     console.log(req.body)
     const {notes, userId} = req.body;
     const note = await UserNote.saveNotes(userId, notes);
@@ -21,6 +23,7 @@ router.post('/uploadMany', async function (req: any, res: any) {
 });
 
 router.post('/uploadOne', async function (req: any, res: any) {
+    res.header("Access-Control-Allow-Origin", "*");
     console.log(req.body)
     const note = await UserNote.saveNote(req.body);
     res.send(note);
@@ -55,6 +58,7 @@ router.get('/getAllNotesById/:userId', async (req: any, res: any) => {
 
 router.get('/getUserIdByNoteId/:noteId', async (req: any, res: any) => {
     const {noteId} = req.params;
+    res.header("Access-Control-Allow-Origin", "*");
     try {
         const data = await UserNote.getUserIdByNoteId(noteId)
         return res.send(data);
@@ -101,6 +105,7 @@ router.get('/getFollowingById/:userId', async (req: any, res: any) => {
 
 router.post('/addFollowerById/:userId/:followerId', async function (req: any, res: any) {
     console.log(req.body);
+    res.header("Access-Control-Allow-Origin", "*");
     const {userId, followerId} = req.params;
     const follower = await UserNote.addFollower(userId, followerId);
     res.send(follower);
@@ -108,6 +113,7 @@ router.post('/addFollowerById/:userId/:followerId', async function (req: any, re
 
 router.post('/addToFollowersList/:userId/:followerId', async function (req: any, res: any) {
     console.log(req.body);
+    res.header("Access-Control-Allow-Origin", "*");
     const {userId, followerId} = req.params;
     const follower = await UserNote.addToFollowersList(userId, followerId);
     res.send(follower);
@@ -115,12 +121,14 @@ router.post('/addToFollowersList/:userId/:followerId', async function (req: any,
 
 router.post('/saveNote', async function (req: any, res: any) {
     console.log(req.body)
+    res.header("Access-Control-Allow-Origin", "*");
     const note = await UserNote.saveNoteToSavedNotes(req.body);
     res.send(note);
 });
 
 router.delete('/removeFollower/:userId/:followerName', async function (req: any, res: any) {
     console.log(req.body);
+    res.header("Access-Control-Allow-Origin", "*");
     const {userId, followerName} = req.params;
     const follower = await UserNote.removeFollower(userId, followerName);
     res.send(follower);
@@ -128,21 +136,25 @@ router.delete('/removeFollower/:userId/:followerName', async function (req: any,
 
 router.delete('/removeFollowing/:userId/:followingName', async function (req: any, res: any) {
     console.log(req.body);
+    res.header("Access-Control-Allow-Origin", "*");
     const {userId, followingName} = req.params;
     const follower = await UserNote.removeFollowing(userId, followingName);
     res.send(follower);
 });
 
 router.post('/editById', async (req: any, res: any) => {
+    res.header("Access-Control-Allow-Origin", "*");
     return res.send(await UserNote.editNote(req.body));
 })
 
 router.delete('/deleteByUserIdAndNoteId/:userId/:noteId', async (req: any, res: any) => {
     const {noteId, userId} = req.params;
+    res.header("Access-Control-Allow-Origin", "*");
     return res.send(await UserNote.removeNote(userId, noteId));
 })
 
 router.post('/search', async function (req: any, res: any) {
+    res.header("Access-Control-Allow-Origin", "*");
     try {
         console.log(req.body)
        let publicNotes = await UserNote.findPublicNotes(req.body)
@@ -153,6 +165,7 @@ router.post('/search', async function (req: any, res: any) {
 });
 
 router.get('/getSavedNotes/:userId', async function (req: any, res: any) {
+    res.header("Access-Control-Allow-Origin", "*");
     try {
         console.log("HERE")
         let {userId} = req.params;
