@@ -8,12 +8,14 @@ const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
 
 
 router.post('/upload', async function (req: any, res: any) {
+    res.header("Access-Control-Allow-Origin", "*");
     console.log(req.body)
     const note = await UserNote.saveNote(req.body);
     res.send(note);
 });
 
 router.post('/uploadMany', async function (req: any, res: any) {
+    res.header("Access-Control-Allow-Origin", "*");
     console.log(req.body)
     const {notes, userId} = req.body;
     const note = await UserNote.saveNotes(userId, notes);
@@ -21,6 +23,7 @@ router.post('/uploadMany', async function (req: any, res: any) {
 });
 
 router.post('/uploadOne', async function (req: any, res: any) {
+    res.header("Access-Control-Allow-Origin", "*");
     console.log(req.body)
     const note = await UserNote.saveNote(req.body);
     res.send(note);
@@ -28,6 +31,7 @@ router.post('/uploadOne', async function (req: any, res: any) {
 
 router.get('/getByUserIdAndNoteId/:userId/:noteId', async (req: any, res: any) => {
     const {noteId, userId} = req.params;
+    res.header("Access-Control-Allow-Origin", "*");
     try {
         const note = await UserNote.getNote(userId, noteId)
         return res.send(note);
@@ -40,19 +44,26 @@ router.get('/getAllNotesById/:userId', async (req: any, res: any) => {
     const {userId} = req.params;
     try {
         const data = await UserNote.findById(userId)
+        res.header("Access-Control-Allow-Origin", "*");
+        console.log("DATA IS", data)
+        if (data  === null){
+            console.log("NULL HERE")
+            return res.send([]);
+        }
         return res.send(data.notes);
     } catch (e) {
-        res.status(204).send()
+        res.status(204).send([])
     }
 })
 
 router.get('/getUserIdByNoteId/:noteId', async (req: any, res: any) => {
     const {noteId} = req.params;
+    res.header("Access-Control-Allow-Origin", "*");
     try {
         const data = await UserNote.getUserIdByNoteId(noteId)
         return res.send(data);
     } catch (e) {
-        res.status(204).send()
+        res.status(204).send([])
     }
 })
 
@@ -68,11 +79,17 @@ router.get('/getMostRecentNotes', async (req: any, res: any) => {
 
 router.get('/getFollowersById/:userId', async (req: any, res: any) => {
     const {userId} = req.params;
+    res.header("Access-Control-Allow-Origin", "*");
     try {
         const data = await UserNote.findById(userId)
-        return res.send(data.followers);
+        if (data  === null){
+            console.log("NULL HERE")
+            return res.send([]);
+        } else{
+            return res.send(data.followers);
+        }
     } catch (e) {
-        res.status(204).send()
+        res.status(204).send([])
     }
 })
 
@@ -88,6 +105,7 @@ router.get('/getFollowingById/:userId', async (req: any, res: any) => {
 
 router.post('/addFollowerById/:userId/:followerId', async function (req: any, res: any) {
     console.log(req.body);
+    res.header("Access-Control-Allow-Origin", "*");
     const {userId, followerId} = req.params;
     const follower = await UserNote.addFollower(userId, followerId);
     res.send(follower);
@@ -95,6 +113,7 @@ router.post('/addFollowerById/:userId/:followerId', async function (req: any, re
 
 router.post('/addToFollowersList/:userId/:followerId', async function (req: any, res: any) {
     console.log(req.body);
+    res.header("Access-Control-Allow-Origin", "*");
     const {userId, followerId} = req.params;
     const follower = await UserNote.addToFollowersList(userId, followerId);
     res.send(follower);
@@ -115,6 +134,7 @@ router.delete('/unsaveNote/:noteId', async function (req: any, res: any) {
 
 router.delete('/removeFollower/:userId/:followerName', async function (req: any, res: any) {
     console.log(req.body);
+    res.header("Access-Control-Allow-Origin", "*");
     const {userId, followerName} = req.params;
     const follower = await UserNote.removeFollower(userId, followerName);
     res.send(follower);
@@ -122,21 +142,25 @@ router.delete('/removeFollower/:userId/:followerName', async function (req: any,
 
 router.delete('/removeFollowing/:userId/:followingName', async function (req: any, res: any) {
     console.log(req.body);
+    res.header("Access-Control-Allow-Origin", "*");
     const {userId, followingName} = req.params;
     const follower = await UserNote.removeFollowing(userId, followingName);
     res.send(follower);
 });
 
 router.post('/editById', async (req: any, res: any) => {
+    res.header("Access-Control-Allow-Origin", "*");
     return res.send(await UserNote.editNote(req.body));
 })
 
 router.delete('/deleteByUserIdAndNoteId/:userId/:noteId', async (req: any, res: any) => {
     const {noteId, userId} = req.params;
+    res.header("Access-Control-Allow-Origin", "*");
     return res.send(await UserNote.removeNote(userId, noteId));
 })
 
 router.post('/search', async function (req: any, res: any) {
+    res.header("Access-Control-Allow-Origin", "*");
     try {
         console.log(req.body)
        let publicNotes = await UserNote.findPublicNotes(req.body)
@@ -147,6 +171,7 @@ router.post('/search', async function (req: any, res: any) {
 });
 
 router.get('/getSavedNotes/:userId', async function (req: any, res: any) {
+    res.header("Access-Control-Allow-Origin", "*");
     try {
         console.log("HERE")
         let {userId} = req.params;
@@ -189,19 +214,23 @@ router.get('/stripe-checkout/success', async (req, res) => {
     res.status(200).redirect(`${process.env.CLIENT_URL}?success`);
   });
 
-  ///notes/stripe-checkout/success?session_id=cs_test_a1lqPJJ6d1SLSxCliLwIg6CLPn5wFYzWGq6H6OZEIAWkKmWoMj1Jx1F
- ///notes/stripe-checkout/failure?session_id=cs_test_a16TqWJ83NdsK82HzG1PMaw9fa2JkllZauYdCJbbDdQfuHX4tzwWaAK
   router.get('/stripe-checkout/failure', async (req, res) => {
     console.log("HERE I AM")
     res.status(200).redirect(`${process.env.CLIENT_URL}?failure`);
   });
 
   router.get('/getpro/:userId', async (req, res) => {
-    console.log("ROUTE PRO")
+try{
+    res.header("Access-Control-Allow-Origin", "*");
     const {userId} = req.params;
     const hasPro = await UserNote.getPro(userId)
     console.log("FINISHED ROUTE", hasPro)
     return res.send({proStatus: hasPro });
+} catch (e){
+    res.status(204).send({proStatus: false })
+
+}
+
   });
 
 module.exports = router;
