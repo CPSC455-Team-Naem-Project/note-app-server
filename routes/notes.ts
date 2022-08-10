@@ -177,6 +177,9 @@ router.get('/getSavedNotes/:userId', async function (req: any, res: any) {
         console.log("HERE")
         let {userId} = req.params;
         let savedNotes = await UserNote.getSavedNotes(userId);
+        if ( savedNotes === null) {
+            res.send([])
+        }
         return res.send(savedNotes);
     } catch (e) {
         res.status(204).send()
